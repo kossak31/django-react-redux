@@ -12,6 +12,7 @@ import Message from "../components/Message";
 import { useSelector, useDispatch } from 'react-redux';
 
 /* ACTION CREATORS */
+import { calculateTotal } from "../actions/productActions";
 import { listCoupons, applyCoupons } from "../actions/couponActions";
 
 
@@ -30,6 +31,9 @@ function CouponScreen() {
     const list_Coupons = useSelector(state => state.list_Coupons);
     const { coupons } = list_Coupons;
 
+    const calculate_Total = useSelector(state => state.calculate_Total);
+    const { subtotal } = calculate_Total;
+
     const apply_Coupons = useSelector(state => state.apply_Coupons);
     const { validar } = apply_Coupons;
 
@@ -38,88 +42,100 @@ function CouponScreen() {
     /* FIRING OFF THE ACTION CREATORS USING DISPATCH */
     useEffect(() => {
         dispatch(listCoupons());
+        dispatch(calculateTotal(total));
+        setAlgo(total);
     }, [dispatch]);
-
-
-    const [coupon, setCoupon] = useState();
-
-    function calc(e) {
-        e.preventDefault();
-
-        let obj = coupons.find(o => o.coupon === coupon);
-
-        if (coupon == obj.coupon) {
-            dispatch(applyCoupons(coupon));
-            console.log("validouc")
-        } else {
-            console.log("invalidouc")
-        }
-
-    }
-
 
 
 
     const [code, setCode] = useState('');
+    const [algo, setAlgo] = useState(total);
+
+
     const couponHandler = (e) => {
-        //dispatch(calcularDesconto());
         e.preventDefault();
 
 
-        if (code === '10') {
-            //calculate percentage of discount from total price
-            const discount = total * 10 / 100;
-            const newTotal = total - discount;
-            document.getElementById('total').innerHTML = newTotal;
-            console.log(newTotal)
-            dispatch(applyCoupons(newTotal));
+        let obj = coupons.find(o => o.coupon === code);
+
+        if (obj) { // if the coupon is valid
+
+            dispatch(applyCoupons(obj.coupon));
+
+
+
+            let arr = []
+            if (arr.length >= 0) {
+                for (let i = 0; i < validar.length; i++) {
+
+                    let x = coupons.find(o => o.coupon === validar[i]);
+
+                    arr.push({
+                        coupon: validar[i],
+                        value: x.value
+                    })
+                    console.log(arr)
+                }
+            }
+
+
+            let first_coupon = []
+
+            for (let i = 0; i < arr.length; i++) {
+
+                //usar primeiro elemento do array, posicao 0
+                const firstElement = arr.find(element => element != undefined);
+
+                //calcular multiplos coupon %
+                var discount = total * firstElement.value / 100;
+                var calc1 = total - discount
+                first_coupon.push(calc1)
+
+
+
+                if (first_coupon.length <= 1) { //um coupon
+                    var newTotal = calc1
+                    document.getElementById('total').innerHTML = parseFloat(newTotal).toFixed(2);
+                } else if (first_coupon.length > 1) { // outro coupon
+                    if (discount > result) {
+                        console.log("positivo")
+
+
+                    } else {
+                        var result = calc1 * arr[i].value / 100;
+                        var newTotal = calc1 - result
+                        document.getElementById('total').innerHTML = parseFloat(newTotal).toFixed(2);
+                        console.log("negativo")
+
+                    }
+
+                    // var result = calc1 * arr[i].value / 100;
+                    // var newTotal = discount - result
+                    // document.getElementById('total').innerHTML = parseFloat(newTotal).toFixed(2);
+                }
+
+                console.log(newTotal)
+
+            }
+
+
+            //document.getElementById('total').innerHTML = parseFloat(newTotal).toFixed(2);
+
+            //somatorio
+            //const sum = arr.reduce((total, item) => total + Number(item.value), 0);
+            //console.log(sum)
+
+            console.log("validou")
+
+        } else {
+            console.log("copao invalido")
         }
 
-        if (code === '50') {
-            //calculate percentage of discount from total price
 
-            const discount = total * 50 / 100;
-            const newTotal = total - discount;
-            document.getElementById('total').innerHTML = newTotal;
-            dispatch(applyCoupons(newTotal));
-            console.log(newTotal)
-        }
+    }//couponHandler
 
 
 
-
-
-
-
-        //calculate coupon multiplier
-
-        // if (code) {
-        // const x = coupon.map((item) => {
-        //     const obj = { "coupon": item.coupon, "value": item.value };
-        //     return obj;
-        // });
-
-
-
-        //var coupon_value = document.getElementById('code').value;
-
-        //console.log("coupon: ", x);
-        //console.log("code_value: ", code);
-        //let u = x.find((c) => c.coupon === code)
-
-        // if (u) {
-        //     //const total = cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2)
-        //     //calculate percentage of discount from total price
-        //     // const discount = total * u.value / 100;
-        //     // const newTotal = total - discount;
-        //     // document.getElementById('total').innerHTML = newTotal;
-
-        //     alert('Coupon applied!');
-        // } else {
-        //     alert('Coupon ERROR!');
-        // }
-        // }
-    }
     return (
         <div>
 

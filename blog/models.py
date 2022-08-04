@@ -1,5 +1,7 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
 
 # Create your models here.
 
@@ -25,10 +27,16 @@ class Product(models.Model):
         return self.name + " | " + str(self.price)
 
 
-class CouponCodes(models.Model):
-    coupon = models.CharField(max_length=200, null=True, blank=True)
+class CouponCode(models.Model):
+    coupon = models.CharField(max_length=10, unique=True, validators=[RegexValidator(
+        '^[A-Z_0-9]*$', 'Only uppercase letters and numbers and underscores allowed.')],)
+    qty = models.PositiveIntegerField(
+        default=0, validators=[MaxValueValidator(50)])
+    valid_from = models.DateTimeField(auto_now_add=False, null=False)
+    valid_to = models.DateTimeField(auto_now_add=False, null=False)
     describe = models.CharField(max_length=200, null=True, blank=True)
-    value = models.CharField(max_length=2, null=True, blank=True)
+    value = models.IntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(100)])
     active = models.BooleanField(default=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now_add=False, null=True, blank=True)

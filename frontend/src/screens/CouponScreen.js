@@ -35,7 +35,7 @@ function CouponScreen() {
     const { subtotal } = calculate_Total;
 
     const apply_Coupons = useSelector(state => state.apply_Coupons);
-    const { validar } = apply_Coupons;
+    const { active_coupons } = apply_Coupons;
 
 
 
@@ -66,12 +66,12 @@ function CouponScreen() {
 
             let arr = []
             if (arr.length >= 0) {
-                for (let i = 0; i < validar.length; i++) {
+                for (let i = 0; i < active_coupons.length; i++) {
 
-                    let x = coupons.find(o => o.coupon === validar[i]);
+                    let x = coupons.find(o => o.coupon === active_coupons[i]);
 
                     arr.push({
-                        coupon: validar[i],
+                        coupon: active_coupons[i],
                         value: x.value
                     })
                     console.log(arr)
@@ -96,24 +96,19 @@ function CouponScreen() {
                 if (first_coupon.length <= 1) { //um coupon
                     var newTotal = calc1
                     document.getElementById('total').innerHTML = parseFloat(newTotal).toFixed(2);
+                    dispatch(calculateTotal(newTotal));
+
                 } else if (first_coupon.length > 1) { // outro coupon
-                    if (discount > result) {
-                        console.log("positivo")
 
+                    var result = calc1 * arr[i].value / 100;
+                    var newTotal = calc1 - result
+                    document.getElementById('total').innerHTML = parseFloat(newTotal).toFixed(2);
+                    console.log("negativo")
 
-                    } else {
-                        var result = calc1 * arr[i].value / 100;
-                        var newTotal = calc1 - result
-                        document.getElementById('total').innerHTML = parseFloat(newTotal).toFixed(2);
-                        console.log("negativo")
+                    dispatch(calculateTotal(newTotal));
 
-                    }
-
-                    // var result = calc1 * arr[i].value / 100;
-                    // var newTotal = discount - result
-                    // document.getElementById('total').innerHTML = parseFloat(newTotal).toFixed(2);
                 }
-
+                setCode('');
                 console.log(newTotal)
 
             }
@@ -155,6 +150,7 @@ function CouponScreen() {
                             type="text"
                             id="coupon"
                             onChange={(e) => setCode(e.target.value)}
+                            value={code}
                         />
                         <Button variant="primary" onClick={couponHandler}
                         >Primary</Button>{' '}

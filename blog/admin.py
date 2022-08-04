@@ -4,5 +4,5 @@ from .models import *
 # Register your models here.
 
 
-admin.site.register(CouponCodes)
+admin.site.register(CouponCode)
 admin.site.register(Product)

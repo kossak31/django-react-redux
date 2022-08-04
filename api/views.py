@@ -2,8 +2,8 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from blog.models import Product, CouponCodes
-from blog.serializers import ProductSerializer, CouponCodesSerializer
+from blog.models import Product, CouponCode
+from blog.serializers import ProductSerializer, CouponCodeSerializer
 # Create your views here.
 
 
@@ -25,6 +25,6 @@ def create_product(request):
 
 @api_view(['GET'])
 def get_coupons(request):
-    coupons = CouponCodes.objects.all()
-    serializer = CouponCodesSerializer(coupons, many=True)
+    coupons = CouponCode.objects.all()
+    serializer = CouponCodeSerializer(coupons, many=True)
     return Response(serializer.data)

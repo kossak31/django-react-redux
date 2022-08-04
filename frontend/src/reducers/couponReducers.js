@@ -28,17 +28,17 @@ export const listCoupons = (state = {
 
 
 export const applyCoupons = (state = {
-    validar: []
+    active_coupons: []
 }, action) => {
     switch (action.type) {
 
         case 'APPLY_COUPON_SUCCESS':
 
-            const item = state.validar.find((pro) => pro === action.payload)
+            const item = state.active_coupons.find((pro) => pro === action.payload)
             if (item) {
                 console.log('coupon ja existe')
             } else {
-                state.validar.push(action.payload)
+                state.active_coupons.push(action.payload)
             }
 
         // return {

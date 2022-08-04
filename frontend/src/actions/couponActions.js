@@ -28,7 +28,7 @@ export const listCoupons = () => async (dispatch, getState) => {
 
 
 
-  export const applyCoupons = (data) => (dispatch, getState) => { 
+  export const applyCoupons = (data) => (dispatch) => { 
 
    
       dispatch({
